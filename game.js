@@ -1,3 +1,34 @@
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+// unlock audio on first click (browser requirement)
+document.addEventListener("click", () => {
+  if (audioCtx.state === "suspended") {
+    audioCtx.resume();
+  }
+});
+
+// ================= SOUND FUNCTION =================
+function playSound(type) {
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  let freq = 300;
+
+  if (type === "jump") freq = 350;
+  if (type === "coin") freq = 700;
+  if (type === "hit") freq = 120;
+
+  osc.frequency.value = freq;
+  osc.type = "square";
+
+  gain.gain.value = 0.15;
+
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.12);
+}
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
